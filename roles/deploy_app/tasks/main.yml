@@ -1,0 +1,34 @@
+---
+# tasks file for deploy_app
+
+- name: Install  Maven
+  apt:
+    pkg:
+    - openjdk-8-jdk
+    - maven
+    update_cache: yes
+    cache_valid_time: 3600
+    state: present
+
+- name: Synchronization app files
+  synchronize:
+    src: footgo/
+    dest: /footgo/
+
+- name: Configure footgo java app as service
+  synchronize:
+    src: footgo.service
+    dest: /etc/init.d/footgo
+
+- name: Systemctl daemon-reload
+  shell: systemctl daemon-reload
+
+- name: Build app
+  command:
+    chdir: /footgo
+    cmd: mvn clean package
+
+- name: Start or restart app
+  service:
+    name: footgo
+    state: restarted

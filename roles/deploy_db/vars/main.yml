@@ -1,0 +1,6 @@
+---
+# vars file for deploy_db
+
+mysql_root_password: pwd
+mysql_db: footgo
+

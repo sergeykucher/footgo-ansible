@@ -1,0 +1,52 @@
+---
+# tasks file for deploy_db
+
+- name: Specify MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password' value='{{mysql_root_password | quote}}' vtype='password'
+
+- name: Confirm MySQL root password before installing
+  debconf: name='mysql-server' question='mysql-server/root_password_again' value='{{mysql_root_password | quote}}' vtype='password'
+
+- name: Install MySQL
+  apt:
+    pkg:
+    - python-mysqldb
+    - mysql-server
+    - python-pip
+    update_cache: yes
+    cache_valid_time: 3600
+    state: present
+
+- name: Install PyMySQL
+  pip:
+    name: pymysql
+    state: present
+
+- name: Configure MySQL server
+  synchronize:
+    src: mysqld.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+
+- name: Start the MySQL service
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Create Database footgo
+  mysql_db:
+    name: '{{mysql_db}}'
+    login_user: root
+    login_password: '{{mysql_root_password}}'
+
+- name: Create database user using password with all database privileges
+  mysql_user:
+    name: root
+    password: pwd
+    priv: '*.*:ALL'
+    host: 192.168.33.13
+    state: present
+    login_user: root
+    login_password: '{{mysql_root_password}}'
+  notify: MySQL restart
+

@@ -1,0 +1,8 @@
+---
+# handlers file for deploy_db
+
+- name: MySQL restart
+  service:
+    name: mysql
+    state: restarted
+

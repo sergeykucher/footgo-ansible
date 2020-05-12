@@ -1,0 +1,10 @@
+
+[footgo_DB]
+db ansible_host=192.168.33.12
+
+[footgo_APP]
+app ansible_host=192.168.33.13
+
+[footgo:children]
+footgo_DB
+footgo_APP

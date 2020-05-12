@@ -1,0 +1,14 @@
+
+---
+- name: Deploy MySQL
+  hosts: footgo_DB
+
+  roles:
+    - deploy_db
+
+
+- name: Deploy App
+  hosts: footgo_APP
+
+  roles:
+  - deploy_app
